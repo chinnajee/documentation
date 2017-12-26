@@ -26,7 +26,7 @@
         - name: Spellcheck
           command: yarn run check
         - name: HTMLProofer
-          command: bundle exec htmlproofer --assume-extension /docs/_site
+          command: bundle exec htmlproofer ./docs/_site --only-4xx --check-html --assume-extension
 - name: fail_master_on_forks
   service: documentation
   tag: master
