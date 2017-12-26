@@ -25,6 +25,8 @@
           command: bundle exec jekyll doctor
         - name: Spellcheck
           command: yarn run check
+        - name: HTMLProofer
+          command: bundle exec htmlproofer --assume-extension /docs/_site
 - name: fail_master_on_forks
   service: documentation
   tag: master
