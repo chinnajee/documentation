@@ -13,6 +13,9 @@
         - name: post-process
           service: documentation
           command: gulp post-process
+        - name: HTMLProofer
+          service: documentation
+          command: bundle exec htmlproofer ./docs/_site --only-4xx --check-html --assume-extension
     - type: serial
       name: linters
       service: documentation
@@ -25,8 +28,6 @@
           command: bundle exec jekyll doctor
         - name: Spellcheck
           command: yarn run check
-        - name: HTMLProofer
-          command: bundle exec htmlproofer ./docs/_site --only-4xx --check-html --assume-extension
 - name: fail_master_on_forks
   service: documentation
   tag: master
