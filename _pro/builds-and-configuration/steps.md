@@ -188,14 +188,14 @@ Since that's confusing, here's a logically equivalent example:
   - command: echo two
 ```
 
-## Run steps
+## Run Steps
 
 Run steps specify a command to run on a service. You must specify one or two directives:
 
 * `command` the command to run. This is always required, and identifies a step as a run step. Note that quotes are respected to split up arguments, but special characters such as `&&`, `|` or `>` are not.
 * `service` the service to run the command on. If you already specified a service at the group level you can not specify a service again, otherwise this directive is required.
 
-## Push steps
+## Push Steps
 
 <br />
 <div class="info-block">
@@ -236,6 +236,34 @@ The commit description is the result of running `git describe --abbrev=1 --tags 
 When using a private repository, or a non-standard tag in the `image_name`, keep in mind your step directives _MUST_ match your service descriptions. In order to use a private registry, the `image_name` directive in your steps file needs to match the `image_name` from `codeship_services.yml`, and should look something like `myregistry.mydomain.com:5002/myuser/myrepo`.
 
 As for the `encrypted_dockercfg_path` directive, we support both, the older `.dockercfg` as well as the newer `${HOME}/.docker/config.json` format. You can simply encrypt either of those files via `jet encrypt` and commit the encrypted files to the repository and the configuration will be picked up.
+
+## Manual Approval Steps
+
+You can use the `type: manual` directive to require that a step requires manual approval before proceeding further. For instance:
+
+```yaml
+- type: manual
+  tag: master
+  steps:
+    - service: app
+      name: requires-approval
+      command: deploy.sh
+```
+
+This is a new feature and we would love any [feedback you have](mailto:feedback@codeship.com) to help us learn more about expanding and improving the use cases.
+
+There are several important things to note when using manual steps:
+
+- Only one manual step group is allowed for any specific build context. This means that you can have separate manual step groups for the `staging` and `master` branches, but not two manual step groups for the `master` branch.
+
+- Only [project owners]({{ site.baseurl }}{% link _/general/account/organizations.md %}#team-roles-and-permissions) can approve builds paused pending manual approval.
+
+- Manual approval steps must be the final steps in your pipeline. We will not process builds with steps _after_ your manual approval steps, as these steps should be grouped into the manual approval group instead.
+
+- Once approved, the pending steps will run as a new build, beginning to end, including the previously paused steps. These build runs will be grouped together under a single build on your dashboards, as seen in the screenshot below.
+
+
+![Manual approval step group]({{ site.baseurl }}/images/general/manual-approval.png)
 
 ## Build Environment
 
